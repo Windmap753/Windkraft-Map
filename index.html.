@@ -1,5 +1,3 @@
-index.html
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -7,6 +5,7 @@ index.html
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Windkraft-Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <style>
     html, body {
       height: 100%;
@@ -16,8 +15,8 @@ index.html
     #map {
       height: 100vh;
       width: 100%;
-
     }
+
     .titel {
       position: absolute;
       z-index: 1000;
@@ -55,24 +54,30 @@ index.html
       'Straßenkarte': strassen,
       'Satellitenansicht': satellit
     }).addTo(map);
-fetch('./Windmap.geojson')
-  .then(response => response.json())
-  .then(data => {
-   L.geoJSON(data, {
-      onEachFeature: (feature, layer) => {
-        const daten = feature.properties || {};
-        const inhalt = Object.entries(daten)
-          .filter(([key, value]) => value != null && value !== '')
-          .map(([key, value]) => <b>${key}:</b> ${value})
-          .join('<br>');
 
-        layer.bindPopup(inhalt || 'Keine Informationen vorhanden');
-      }
-    }).addTo(map);
-  })
-  .catch(error => console.error('Fehler beim Laden der Windräder:', error));
+    fetch('./Windmap.geojson')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Windmap.geojson wurde nicht gefunden');
+        }
+        return response.json();
+      })
+      .then(data => {
+        L.geoJSON(data, {
+          onEachFeature: (feature, layer) => {
+            const daten = feature.properties || {};
+            const inhalt = Object.entries(daten)
+              .filter(([key, value]) => value != null && value !== '')
+              .map(([key, value]) =>
+                <b>${key}:</b> ${String(value)}
+              )
+              .join('<br>');
 
+            layer.bindPopup(inhalt || 'Keine Informationen vorhanden');
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Fehler beim Laden der Windräder:', error));
   </script>
 </body>
 </html>
-
