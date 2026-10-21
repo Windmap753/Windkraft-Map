@@ -49,6 +49,18 @@ index.html
       'Straßenkarte': strassen,
       'Satellitenansicht': satellit
     }).addTo(map);
+fetch('./windmap.geojson')
+  .then(response => response.json())
+  .then(data => {
+    L.geoJSON(data, {
+      onEachFeature: (feature, layer) => {
+        const name = feature.properties?.Name || 'Windrad';
+        layer.bindPopup(name);
+      }
+    }).addTo(map);
+  })
+  .catch(error => console.error('Fehler beim Laden der Windräder:', error));
+
   </script>
 </body>
 </html>
