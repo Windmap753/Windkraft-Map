@@ -49,7 +49,7 @@ index.html
       'Straßenkarte': strassen,
       'Satellitenansicht': satellit
     }).addTo(map);
-fetch('./windmap.geojson')
+fetch('./Windmap.geojson')
   .then(response => response.json())
   .then(data => {
     L.geoJSON(data, {
